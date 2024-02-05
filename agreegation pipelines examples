@@ -1,0 +1,244 @@
+1. Count of users that are active
+
+[
+  {
+    $match: {
+      isActive: true
+    }
+  }, {
+    $count: 'activeUsers'
+  }
+]
+
+2. Find the average age of all the users
+
+[
+  {
+    $group: {
+      _id: null, 
+      averageAge: {
+        $avg: "$age"
+      }
+    }
+  }
+]
+
+3. Find the average age of males and females
+
+[
+  {
+    $group: {
+      _id: "$gender", 
+      averageAge: {
+        $avg: "$age"
+      }
+    }
+  }
+]
+
+4. Find the 2 most common favoriteFruit among users
+
+[
+  {
+    $group: {
+      _id: "$favoriteFruit",
+      _count: {
+        $sum: 1
+      }
+    }
+  }, 
+  {
+    $sort: {
+      _count: -1
+    }
+  }, 
+  {
+    $limit: 2
+  }
+]
+
+5. Which two countries has highest number of registered users?
+
+[
+  {
+    $group: {
+      _id: "$company.location.country",
+      userCount: {
+        $sum: 1
+      }
+    }
+  }, 
+  {
+    $sort: {
+      userCount: -1
+    }
+  },
+  {
+    $limit: 2
+  }
+]
+
+6. Find the average number of tags per user
+
+1st way
+
+[
+  {
+    $unwind: "$tags"
+  },
+  {
+    $group: {
+      _id: "$_id",
+      numberOfTags: {
+        $sum: 1
+      }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      averageNumberOfTags: {
+        $avg: "$numberOfTags"
+      }
+    }
+  }
+]
+
+2nd way
+
+[
+  {
+    $addFields: {
+      numberOfTags: {
+        $size: {$ifNull: ["$tags", []]}
+      }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      averageNumberOfTags: {
+        $avg: "$numberOfTags"
+      }
+    }
+  }
+]
+
+7. How many users have enim as one of their tags
+[
+  {
+    $match: {
+      tags: "enim"
+    }
+  }, 
+  {
+    $count: 'UsersWithEnimTag'
+  }
+]
+
+8. What are the names and ages of all the users that are inactive and has "velit" as one of their tags?
+
+[
+  {
+    $match: {
+      isActive: false,
+      tags: "velit",
+    },
+  },
+  {
+    $project: {
+      name: 1,
+      age: 1,
+    },
+  },
+]
+
+9. Categorize users by their favoriteFruit
+
+[
+  {
+    $group: {
+      _id: "$favoriteFruit",
+      users: { $push: "$name"}
+    }
+  }
+]
+
+10. How many users have their second tag as addFields
+
+[
+  {
+    $match: {
+      "tags.1": "ad"
+    }
+  },
+  {
+    $count: 'secondTagAd'
+  }
+]
+
+11. Find users who have both "enim" and "id" as their tags
+
+[
+  {
+    $match: {
+      tags: {$all: ["enim", "id"]}
+    }
+  }
+]
+
+12. List all the companies located in USA and their corresponding user count
+
+[
+  {
+    $match: {
+      "company.location.country": "USA"
+    }
+  }, 
+  {
+    $group: {
+      _id: "$company.title",
+      userCount: {$sum: 1}
+    }
+  }
+]
+
+13. List all the books along with their author details
+
+[
+  {
+    $lookup: {
+      from: "authors",
+      localField: "author_id",
+      foreignField: "_id",
+      as: "authorDetails"
+    }
+  }, 
+  {
+    $addFields: {
+      authorDetails: {
+        $first: "$authorDetails"
+      }
+    }
+  }
+]
+
+alternative way
+
+[
+  {
+    $lookup: {
+      from: "authors",
+      localField: "author_id",
+      foreignField: "_id",
+      as: "authorDetails"
+    }
+  }, 
+  {
+    $addFields: {
+      authorDetails: {
+    		$arrayElemAt: ["$authorDetails", 0]
+      }
+    }
+  }
+]
