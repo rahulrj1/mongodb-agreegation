@@ -1,5 +1,8 @@
-1. Count of users that are active
+# Aggregation Pipeline Examples
 
+## 1. Count of users that are active
+
+```javascript
 [
   {
     $match: {
@@ -9,9 +12,11 @@
     $count: 'activeUsers'
   }
 ]
+```
 
-2. Find the average age of all the users
+## 2. Find the average age of all the users
 
+```javascript
 [
   {
     $group: {
@@ -22,9 +27,11 @@
     }
   }
 ]
+```
 
-3. Find the average age of males and females
+## 3. Find the average age of males and females
 
+```javascript
 [
   {
     $group: {
@@ -35,9 +42,11 @@
     }
   }
 ]
+```
 
-4. Find the 2 most common favoriteFruit among users
+## 4. Find the 2 most common favoriteFruit among users
 
+```javascript
 [
   {
     $group: {
@@ -56,9 +65,11 @@
     $limit: 2
   }
 ]
+```
 
-5. Which two countries has highest number of registered users?
+## 5. Which two countries has highest number of registered users?
 
+```javascript
 [
   {
     $group: {
@@ -77,11 +88,13 @@
     $limit: 2
   }
 ]
+```
 
-6. Find the average number of tags per user
+## 6. Find the average number of tags per user
 
-1st way
+**1st way**
 
+```javascript
 [
   {
     $unwind: "$tags"
@@ -103,9 +116,11 @@
     }
   }
 ]
+```
 
-2nd way
+**2nd way**
 
+```javascript
 [
   {
     $addFields: {
@@ -123,8 +138,11 @@
     }
   }
 ]
+```
 
-7. How many users have enim as one of their tags
+## 7. How many users have enim as one of their tags
+
+```javascript
 [
   {
     $match: {
@@ -135,9 +153,11 @@
     $count: 'UsersWithEnimTag'
   }
 ]
+```
 
-8. What are the names and ages of all the users that are inactive and has "velit" as one of their tags?
+## 8. What are the names and ages of all the users that are inactive and has "velit" as one of their tags?
 
+```javascript
 [
   {
     $match: {
@@ -152,9 +172,11 @@
     },
   },
 ]
+```
 
-9. Categorize users by their favoriteFruit
+## 9. Categorize users by their favoriteFruit
 
+```javascript
 [
   {
     $group: {
@@ -163,9 +185,11 @@
     }
   }
 ]
+```
 
-10. How many users have their second tag as addFields
+## 10. How many users have their second tag as addFields
 
+```javascript
 [
   {
     $match: {
@@ -176,9 +200,11 @@
     $count: 'secondTagAd'
   }
 ]
+```
 
-11. Find users who have both "enim" and "id" as their tags
+## 11. Find users who have both "enim" and "id" as their tags
 
+```javascript
 [
   {
     $match: {
@@ -186,9 +212,11 @@
     }
   }
 ]
+```
 
-12. List all the companies located in USA and their corresponding user count
+## 12. List all the companies located in USA and their corresponding user count
 
+```javascript
 [
   {
     $match: {
@@ -202,9 +230,11 @@
     }
   }
 ]
+```
 
-13. List all the books along with their author details
+## 13. List all the books along with their author details
 
+```javascript
 [
   {
     $lookup: {
@@ -222,9 +252,11 @@
     }
   }
 ]
+```
 
-alternative way
+**Alternative way**
 
+```javascript
 [
   {
     $lookup: {
@@ -237,8 +269,9 @@ alternative way
   {
     $addFields: {
       authorDetails: {
-    		$arrayElemAt: ["$authorDetails", 0]
+        $arrayElemAt: ["$authorDetails", 0]
       }
     }
   }
 ]
+```
